@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
 from app.api import guides, prices
-from app.config import CORS_ORIGINS, WARM_DEALS_ON_STARTUP
+from app.config import CORS_ORIGIN_REGEX, CORS_ORIGINS, WARM_DEALS_ON_STARTUP
 from app.core.http import http
 from app.prices import service as price_service
 
@@ -36,7 +36,8 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Zaptos API", version="1.0.0", lifespan=lifespan,
               description="Gaming hardware price comparison across Indian stores + game guides.")
 app.add_middleware(GZipMiddleware, minimum_size=1024)
-app.add_middleware(CORSMiddleware, allow_origins=CORS_ORIGINS, allow_methods=["GET", "POST"], allow_headers=["*"])
+app.add_middleware(CORSMiddleware, allow_origins=CORS_ORIGINS, allow_origin_regex=CORS_ORIGIN_REGEX,
+                   allow_methods=["GET", "POST"], allow_headers=["*"], max_age=86400)
 
 app.include_router(prices.router)
 app.include_router(guides.router)

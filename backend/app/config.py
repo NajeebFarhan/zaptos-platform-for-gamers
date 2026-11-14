@@ -20,8 +20,16 @@ STORE_TIMEOUT = float(os.getenv("STORE_TIMEOUT", 20))
 # Warm up the "best offers" cache in the background on startup
 WARM_DEALS_ON_STARTUP = os.getenv("WARM_DEALS_ON_STARTUP", "1") == "1"
 
+# Browser origins allowed to call the API (comma-separated, exact, no trailing slash).
+# The production frontend is a Cloudflare Worker; local dev is the Vite server.
+FRONTEND_URL = "https://zaptos-platform-for-gamers.najeebmazumdar.workers.dev"
 CORS_ORIGINS = [
-    o.strip()
-    for o in os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",")
+    o.strip().rstrip("/")
+    for o in os.getenv("CORS_ORIGINS", f"{FRONTEND_URL},http://localhost:5173,http://127.0.0.1:5173").split(",")
     if o.strip()
 ]
+# Cloudflare preview deploys get their own subdomain: https://<version>-zaptos-platform-for-gamers.najeebmazumdar.workers.dev
+# Set CORS_ORIGIN_REGEX to an empty string to turn this off.
+CORS_ORIGIN_REGEX = os.getenv(
+    "CORS_ORIGIN_REGEX", r"https://([a-z0-9-]+-)?zaptos-platform-for-gamers\.najeebmazumdar\.workers\.dev"
+) or None
