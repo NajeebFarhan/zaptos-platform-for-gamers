@@ -9,6 +9,7 @@ from app.core.http import http
 from app.prices.catalog import DEAL_QUERIES
 from app.prices.matcher import build_groups, find_match
 from app.prices.models import Offer, ProductGroup
+from app.prices.scope import filter_offers
 from app.prices.stores import STORES, StoreBlocked
 
 _inflight: dict[str, asyncio.Task] = {}
@@ -31,13 +32,23 @@ def _task_done(task: asyncio.Task, key: str) -> None:
         task.exception()  # mark as retrieved even if every waiter went away
 
 
+def _scoped(store, offers: list[dict]) -> list[dict]:
+    """Marketplaces sell everything; keep their results to PC / gaming gear.
+
+    Applied on read rather than before caching, so entries cached before a scope change
+    are filtered too.
+    """
+    return offers if store.kind == "PC Specialist" else filter_offers(offers)
+
+
 async def fetch_store(store, query: str, refresh: bool = False) -> dict:
     """Offers from one store, served from cache when fresh, stale cache on failure."""
     key = f"offers:v1:{store.id}:{query_key(query)}"
     entry = cache.get_entry(key)
     if entry and entry[1] and not refresh:
+        offers = _scoped(store, entry[0])
         return {"store": store.id, "status": "ok", "cached": True, "stale": False, "ms": 0,
-                "offers": entry[0], "count": len(entry[0]), "fetched_at": entry[2]}
+                "offers": offers, "count": len(offers), "fetched_at": entry[2]}
 
     t0 = time.perf_counter()
     status, error = "ok", None
@@ -62,6 +73,7 @@ async def fetch_store(store, query: str, refresh: bool = False) -> dict:
             offers, stale, fetched_at = entry[0], True, entry[2]
         else:
             offers, fetched_at = [], None
+    offers = _scoped(store, offers)
     return {"store": store.id, "status": status, "error": error, "cached": False, "stale": stale,
             "ms": int((time.perf_counter() - t0) * 1000), "offers": offers, "count": len(offers),
             "fetched_at": fetched_at}
@@ -162,6 +174,6 @@ async def track(items: list[dict], refresh: bool = False) -> dict:
 
 
 async def deals(refresh: bool = False) -> dict:
-    items = await cache.remember("deals:v4", PRICE_TTL, _compute_deals, refresh=refresh)
-    entry = cache.get_entry("deals:v4")
+    items = await cache.remember("deals:v5", PRICE_TTL, _compute_deals, refresh=refresh)
+    entry = cache.get_entry("deals:v5")
     return {"deals": items, "generated_at": entry[2] if entry else time.time()}
