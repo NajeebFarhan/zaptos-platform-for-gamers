@@ -30,7 +30,7 @@ class VedantComputers(Store):
             mrp = parse_price(old.text()) if old else None
             img = card.css_first(".image img")
             classes = (card.attributes.get("class") or "").lower()
-            labels = " ".join(l.text().lower() for l in card.css(".product-label"))
+            labels = " ".join(label.text().lower() for label in card.css(".product-label"))
             out = "out-of-stock" in classes or "out of stock" in labels
             url = (link.attributes.get("href") or self.home).split("?")[0]
             offers.append(

@@ -1,0 +1,26 @@
+name: Live store check
+
+# Weekly check that every store still returns what the parsers expect. A failure here means a store
+# changed its markup/API: save a fresh response over the matching tests/fixtures file and fix the parser.
+# Stores that block the runner (HTTP 403/429, captcha) are skipped, not failed.
+
+on:
+  schedule:
+    - cron: "0 3 * * 1"  # Mondays 03:00 UTC
+  workflow_dispatch:
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: backend/requirements*.txt
+      - run: pip install -r requirements-dev.txt
+      - run: pytest -m live -rs

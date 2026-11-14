@@ -24,6 +24,10 @@ class WooStore(Store):
             data = resp.json()
         except ValueError as exc:
             raise StoreError("invalid JSON") from exc
+        return self.parse(data, limit)
+
+    def parse(self, data, limit: int = 24) -> list[Offer]:
+        """Decoded Store API payload -> offers. Pure, so it can be tested against saved responses."""
         if not isinstance(data, list):
             raise StoreError("unexpected payload")
 

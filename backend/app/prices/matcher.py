@@ -35,7 +35,7 @@ BRANDS = {
     "gskill", "aoc", "viewsonic", "8bitdo", "fantech", "glorious", "keychron", "thrustmaster", "fanatec", "jbl",
     "sennheiser", "boat", "portronics", "playstation", "xbox", "antec", "montech", "lexar", "sandisk", "teamgroup",
     "gamesir", "flydigi", "wooting", "ducky", "rapoo", "havit", "evofox", "amkette", "cougar", "fractal", "phanteks",
-    "segotep", "frontech", "marvel", "biostar", "acer", "predator", "apple", "valve", "meta", "pico", "honeywell",
+    "segotep", "frontech", "marvel", "biostar", "predator", "apple", "valve", "meta", "pico", "honeywell",
 }
 BRAND_ALIASES = {
     "rog": "asus", "aorus": "gigabyte", "wd": "western digital", "xpg": "adata", "playstation": "sony",
@@ -81,7 +81,7 @@ LINES = {
     "hellhound", "reaper", "legend", "challenger", "phantom", "taichi", "sakura", "battle", "infinity", "twin",
     "lightspeed", "superlight", "viper", "deathadder", "basilisk", "blackshark", "kraken", "barracuda",
     "arctis", "nova", "vengeance", "dominator", "fury", "beast", "trident", "ripjaws", "flare", "blackwidow",
-    "huntsman", "apex", "stinger", "flight", "orbit", "evo", "loq", "legion", "omen", "victus", "nitro", "helios",
+    "huntsman", "apex", "stinger", "flight", "orbit", "evo", "loq", "legion", "omen", "victus", "helios",
     "katana", "cyborg", "thin", "stealth", "raider", "zephyrus", "scar", "vivobook", "ideapad", "rs", "elite",
 }
 OPPOSITES = [({"wired"}, {"wireless", "lightspeed"})]

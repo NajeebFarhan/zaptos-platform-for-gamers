@@ -12,7 +12,6 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 COPY app ./app
-COPY tests ./tests
 
 # SQLite cache lives here; mount a volume to keep it across container restarts
 RUN useradd --create-home --uid 10001 appuser && mkdir -p /app/data && chown -R appuser /app

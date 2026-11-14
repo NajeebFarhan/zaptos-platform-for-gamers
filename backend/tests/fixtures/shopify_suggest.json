@@ -1,0 +1,9 @@
+{"resources": {"results": {"products": [
+  {"title": "Corsair  Vengeance DDR5 32GB (2x16GB) 6000MHz", "url": "/products/corsair-vengeance?_pos=1&_sid=abc",
+   "price_min": "11499.00", "compare_at_price_max": "13999.00", "available": true,
+   "vendor": "Corsair", "image": "https://cdn.example/ram.jpg"},
+  {"title": "G.Skill Trident Z5", "url": "https://other.example/p/trident",
+   "price": "9999.00", "compare_at_price_max": "5000.00", "available": false,
+   "vendor": "", "featured_image": {"url": "https://cdn.example/trident.jpg"}},
+  {"title": "Free sample", "url": "/products/free", "price_min": "0", "available": true}
+]}}}

@@ -78,7 +78,8 @@ async def topic(game_id: str, topic_id: str):
 
 @router.get("/{game_id}/latest")
 async def latest(game_id: str):
+    g = _game(game_id)  # outside the try: an unknown game is a 404, not an empty list
     try:
-        return {"items": await web.latest_guides(_game(game_id))}
+        return {"items": await web.latest_guides(g)}
     except Exception:
         return {"items": []}

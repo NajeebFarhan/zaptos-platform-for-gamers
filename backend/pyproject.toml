@@ -1,0 +1,32 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+addopts = "-ra --strict-markers -m 'not live'"
+filterwarnings = [
+    "ignore:.*Proactor event loop does not implement:Warning",  # curl_cffi on Windows; harmless
+]
+markers = [
+    "live: hits the real stores/sites (deselected by default; run with `pytest -m live`)",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py313"
+extend-exclude = [".venv", "data"]
+
+[tool.ruff.lint]
+# errors, pyflakes, import order, bugbear (real bugs), pyupgrade, simplify
+select = ["E", "F", "I", "B", "UP", "SIM"]
+ignore = [
+    "E501",    # long lines: the matcher's vocab tables are deliberately wide
+    "B008",    # FastAPI's Query(...) defaults
+    "SIM105",  # try/except/pass is clearer than contextlib.suppress in the scrapers
+    "SIM108",
+    "SIM102",  # nested ifs in the matcher read better with the explanatory comment between them
+    "B904",    # API handlers turn an internal error into an HTTPException on purpose
+    "B905",    # zip() over equal-length sequences
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B011"]

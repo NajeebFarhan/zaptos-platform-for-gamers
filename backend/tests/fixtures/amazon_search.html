@@ -1,0 +1,30 @@
+<html><body><div id="search"><div class="s-main-slot">
+  <!-- grid layout: brand and title are separate <h2>s; sponsored prefix must be stripped -->
+  <div data-component-type="s-search-result" data-asin="B0AAA11111">
+    <h2 aria-label="Sponsored Ad - ZOTAC"><span>ZOTAC</span></h2>
+    <h2 aria-label="Sponsored Ad - Gaming GeForce RTX 5060 AMP 8GB GDDR7 Graphics Card"><span>x</span></h2>
+    <img class="s-image" src="https://m.media-amazon.com/images/zotac.jpg">
+    <span class="a-price"><span class="a-offscreen">₹41,990</span></span>
+    <span class="a-price a-text-price"><span class="a-offscreen">₹52,999</span></span>
+    <span class="a-icon-alt">4.6 out of 5 stars</span>
+    <span aria-label="1,234 ratings"></span>
+  </div>
+  <!-- single heading, no MRP, no rating -->
+  <div data-component-type="s-search-result" data-asin="B0BBB22222">
+    <h2><span>Logitech G502 X Wired Gaming Mouse</span></h2>
+    <span class="a-price"><span class="a-offscreen">₹4,995</span></span>
+  </div>
+  <!-- no price (currently unavailable): skipped -->
+  <div data-component-type="s-search-result" data-asin="B0CCC33333">
+    <h2><span>Out of stock thing</span></h2>
+  </div>
+  <!-- no ASIN (ad slot): skipped -->
+  <div data-component-type="s-search-result"><h2><span>Ad slot</span></h2>
+    <span class="a-price"><span class="a-offscreen">₹10</span></span></div>
+  <!-- MRP below price is nonsense and must be dropped -->
+  <div data-component-type="s-search-result" data-asin="B0DDD44444">
+    <h2><span>Corsair K70 Mechanical Keyboard</span></h2>
+    <span class="a-price"><span class="a-offscreen">₹9,000</span></span>
+    <span class="a-price a-text-price"><span class="a-offscreen">₹8,000</span></span>
+  </div>
+</div></div></body></html>

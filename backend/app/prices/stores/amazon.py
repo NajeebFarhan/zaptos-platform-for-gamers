@@ -17,6 +17,10 @@ class Amazon(Store):
     async def search(self, http, query, limit=24):
         resp = await http.get(f"{self.home}/s", params={"k": query})
         text = self.check(resp, blocked_markers=("validateCaptcha", "Type the characters you see"))
+        return self.parse(text, limit)
+
+    def parse(self, text: str, limit: int = 24) -> list[Offer]:
+        """Search-results HTML -> offers. Pure, so it can be tested against saved pages."""
         tree = LexborHTMLParser(text)
         items = tree.css('div[data-component-type="s-search-result"]')
         if not items:

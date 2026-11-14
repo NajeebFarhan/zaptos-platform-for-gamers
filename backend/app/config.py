@@ -5,7 +5,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
 DATA_DIR.mkdir(exist_ok=True)
 
-CACHE_DB = DATA_DIR / "cache.sqlite3"
+# Overridable so tests (and odd deployments) never touch the real cache file
+CACHE_DB = Path(os.getenv("CACHE_DB") or DATA_DIR / "cache.sqlite3")
 
 # How long scraped data stays fresh (seconds)
 PRICE_TTL = int(os.getenv("PRICE_TTL", 30 * 60))

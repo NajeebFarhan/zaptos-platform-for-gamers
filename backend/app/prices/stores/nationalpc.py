@@ -52,7 +52,7 @@ class NationalPC(Store):
                     price=price,
                     mrp=mrp if mrp and mrp > price else None,
                     image=img.attributes.get("src") if img else None,
-                    in_stock=False if "out of stock" in text else True,
+                    in_stock="out of stock" not in text,
                     brand=clean(brand.text()).title() if brand else None,
                 )
             )

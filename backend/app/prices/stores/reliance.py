@@ -12,7 +12,10 @@ class RelianceDigital(Store):
 
     async def search(self, http, query, limit=24):
         resp = await http.get(f"{self.home}/products", params={"q": query})
-        text = self.check(resp)
+        return self.parse(self.check(resp), limit)
+
+    def parse(self, text: str, limit: int = 24) -> list[Offer]:
+        """Search-results HTML -> offers. Pure, so it can be tested against saved pages."""
         state = extract_json_after(text, "window.__INITIAL_STATE__")
         if not state:
             raise StoreError("no embedded state")

@@ -1,7 +1,7 @@
 import asyncio
 import re
 import time
-from typing import AsyncIterator
+from collections.abc import AsyncIterator
 
 from app.config import EMPTY_PRICE_TTL, PRICE_TTL, STORE_TIMEOUT
 from app.core.cache import cache
@@ -60,7 +60,7 @@ async def fetch_store(store, query: str, refresh: bool = False) -> dict:
     try:
         offers = await asyncio.shield(task)
         fetched_at = time.time()
-    except asyncio.TimeoutError:
+    except TimeoutError:
         status, error = "timeout", f"no response in {STORE_TIMEOUT:.0f}s"
     except StoreBlocked as exc:
         status, error = "blocked", str(exc)

@@ -22,8 +22,16 @@ class ShopifyStore(Store):
         )
         self.check(resp)
         try:
-            products = resp.json()["resources"]["results"]["products"]
-        except (ValueError, KeyError, TypeError) as exc:
+            payload = resp.json()
+        except ValueError as exc:
+            raise StoreError("unexpected payload") from exc
+        return self.parse(payload, limit)
+
+    def parse(self, payload, limit: int = 24) -> list[Offer]:
+        """Decoded predictive-search payload -> offers. Pure, so it can be tested against saved responses."""
+        try:
+            products = payload["resources"]["results"]["products"]
+        except (KeyError, TypeError) as exc:
             raise StoreError("unexpected payload") from exc
 
         offers: list[Offer] = []

@@ -20,7 +20,7 @@ docker compose down              # stop (add -v to also wipe the price cache)
 - **backend**: `python:3.13-slim` running uvicorn as a non-root user, with a health check. The SQLite cache is kept in the `zaptos-cache` volume, so prices survive restarts.
 - **frontend**: a multi-stage build. Vite builds the app and nginx serves it. nginx also proxies `/api` to the backend (SSE unbuffered for live search) and falls back to `index.html` for client-side routes.
 - Only the frontend is published (port 8080). The API is reachable only inside the compose network. Change the port mapping in `docker-compose.yml` if 8080 is taken.
-- Run the tests inside the container: `docker compose exec backend python -m unittest discover -s tests -t .`
+- The image contains only the app, not the tests. See [Testing](#testing) for running them.
 
 ## Quick start without Docker (Windows)
 
@@ -80,12 +80,7 @@ Requests use `curl_cffi` with a real browser TLS fingerprint and are throttled p
 - capacity or memory-kit layout (1×32GB vs 2×16GB)
 - product line (Ventus vs Shadow, Eagle vs Aero)
 
-Whatever survives is fuzzy-matched with rapidfuzz. The matcher prefers leaving two listings apart over merging different products, because a wrong "cheapest" price is worse than an extra row. The regression tests use real listings:
-
-```bash
-cd backend
-python -m unittest discover -s tests -t .
-```
+Whatever survives is fuzzy-matched with rapidfuzz. The matcher prefers leaving two listings apart over merging different products, because a wrong "cheapest" price is worse than an extra row. The regression tests (`tests/test_matcher.py`, `tests/test_scope.py`) use real listings.
 
 **Best offers** scans a set of popular queries in the background on startup. It ranks products by discount off MRP (MRPs above 3× the price are ignored), savings across stores and rating.
 
@@ -125,11 +120,12 @@ backend/
       web.py             web search, latest guides, article reader (SSRF-safe)
       sanitize.py        allow-list HTML sanitiser
     api/                 /api/prices/* and /api/guides/* routers
-  tests/test_matcher.py
+  tests/                 pytest suite; fixtures/ holds saved store responses
 frontend/
   src/pages/             Home, Search, Deals, GuidesHome, GameHub, WikiPage, Reader
   src/components/        ProductCard, ProductDrawer, Filters, SearchProgress, SafeHtml…
-  src/lib/               API hooks (incl. SSE live search), INR formatting
+  src/lib/               API hooks (incl. SSE live search), INR formatting, wishlist (+ *.test.js)
+.github/workflows/       CI (lint, tests, build) and a weekly live-store check
 ```
 
 ## API overview
@@ -151,7 +147,36 @@ frontend/
 
 ### Configuration (environment variables)
 
-`PRICE_TTL` (default 1800 s), `GUIDE_SEARCH_TTL` (6 h), `WIKI_TTL` (24 h), `ARTICLE_TTL` (24 h), `STORE_TIMEOUT` (20 s), `WARM_DEALS_ON_STARTUP` (`1`), `CORS_ORIGINS`. For the frontend, set `VITE_API_BASE` if the API is not served from the same origin.
+`PRICE_TTL` (default 1800 s), `GUIDE_SEARCH_TTL` (6 h), `WIKI_TTL` (24 h), `ARTICLE_TTL` (24 h), `STORE_TIMEOUT` (20 s), `WARM_DEALS_ON_STARTUP` (`1`), `CACHE_DB` (path of the SQLite cache), `CORS_ORIGINS` (comma-separated browser origins allowed to call the API) and `CORS_ORIGIN_REGEX` (for preview deploys). For the frontend, `VITE_API_URL` (see `frontend/.env.production`) is the backend's origin when it isn't served from the same origin.
+
+---
+
+## Testing
+
+```bash
+# backend (from backend/)
+pip install -r requirements-dev.txt
+pytest                 # ~220 tests in about 2 seconds, no network
+ruff check .           # lint
+pytest -m live         # opt-in: checks the real stores still look the way the parsers expect
+
+# frontend (from frontend/)
+npm test               # vitest; `npm run test:watch` while developing
+```
+
+CI runs the lint, both test suites and the production build on every push and pull request. A separate weekly job runs `pytest -m live`.
+
+**How the code is set up to be testable**
+
+- Each store adapter has a pure `parse()` (saved HTML/JSON in, offers out) next to a thin `search()` that only fetches. Parsers are tested against saved responses in `backend/tests/fixtures/`, so no test needs the network.
+- Tests never touch your real cache or the internet: `conftest.py` points `CACHE_DB` at a temp file, and the API tests stub out the HTTP client so an accidental real request fails the test instead of reaching a live site.
+- The service and API are tested with scripted fake stores (`FakeStore` in `conftest.py`): caching, timeouts, blocked stores, stale fallback, the SSE stream, validation and CORS.
+- The security-sensitive code, the HTML sanitiser and the article reader's SSRF guard, has its own tests with hostile inputs.
+- `tests/test_contract.py` fails if the backend and frontend drift apart, e.g. a new product kind with no label on the frontend.
+
+**When a store changes its site:** the weekly live check (or a user report) tells you which store broke. Save a fresh response over that store's file in `backend/tests/fixtures/`, see which parser tests fail, fix the parser, and keep the fixture as the regression test.
+
+**When you add a store:** write its `parse()`, add a fixture and a test class in `test_store_parsers.py`. The live check picks it up automatically, since it iterates over `STORES`.
 
 ---
 

@@ -11,7 +11,8 @@ import json
 import sqlite3
 import threading
 import time
-from typing import Any, Awaitable, Callable
+from collections.abc import Awaitable, Callable
+from typing import Any
 
 from app.config import CACHE_DB
 
