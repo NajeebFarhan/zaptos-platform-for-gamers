@@ -1,2 +1,4 @@
 node_modules
 dist
+# the Docker image serves the API through its own nginx proxy, not the hosted backend
+.env*

@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 
-const BASE = import.meta.env.VITE_API_BASE || "";
+import API_URL from "../config";
+
+// Backend origin for production builds (frontend/.env.production). Unset in dev and Docker,
+// where the Vite dev server / nginx proxy /api to the backend on the same origin.
+const BASE = (API_URL || "").replace(/\/+$/, "");
 
 export async function api(path, { signal, body } = {}) {
   const init = body === undefined
