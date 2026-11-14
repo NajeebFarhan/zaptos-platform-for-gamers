@@ -14,11 +14,11 @@ export default function WikiPage() {
   const page = useApi(`/api/guides/${gameId}/wiki?title=${encodeURIComponent(title)}`);
   const related = useApi(`/api/guides/${gameId}/related?title=${encodeURIComponent(title)}`);
   const d = page.data;
-  const accent = game?.accent || "#8b6cff";
+  const accent = game?.accent || "#22e584";
   const agent = d?.agent;
 
   useEffect(() => {
-    document.title = `${title} — ${game?.name || "Guide"} · LootScout`;
+    document.title = `${title} — ${game?.name || "Guide"} · Zaptos`;
   }, [title, game]);
 
   return (
@@ -27,7 +27,7 @@ export default function WikiPage() {
         className="relative overflow-hidden border-b border-line/60"
         style={{
           background: agent?.colors?.length
-            ? `linear-gradient(120deg, ${agent.colors[0]}55, #0a0b10 70%)`
+            ? `linear-gradient(120deg, ${agent.colors[0]}55, #040605 70%)`
             : `radial-gradient(900px 300px at 0% 0%, ${accent}30, transparent 70%)`,
         }}
       >

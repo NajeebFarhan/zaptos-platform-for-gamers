@@ -1,4 +1,4 @@
-# LootScout 🎯
+# Zaptos ⚡
 
 A web app for gamers in India with two jobs:
 
@@ -9,7 +9,20 @@ A web app for gamers in India with two jobs:
 
 ---
 
-## Quick start (Windows)
+## Run with Docker (recommended)
+
+```bash
+docker compose up --build -d     # open http://localhost:8080
+docker compose logs -f backend   # watch scraping / warm-up
+docker compose down              # stop (add -v to also wipe the price cache)
+```
+
+- **backend**: `python:3.13-slim` running uvicorn as a non-root user, with a health check. The SQLite cache is kept in the `zaptos-cache` volume, so prices survive restarts.
+- **frontend**: a multi-stage build. Vite builds the app and nginx serves it. nginx also proxies `/api` to the backend (SSE unbuffered for live search) and falls back to `index.html` for client-side routes.
+- Only the frontend is published (port 8080). The API is reachable only inside the compose network. Change the port mapping in `docker-compose.yml` if 8080 is taken.
+- Run the tests inside the container: `docker compose exec backend python -m unittest discover -s tests -t .`
+
+## Quick start without Docker (Windows)
 
 ```powershell
 .\start.ps1
@@ -76,6 +89,8 @@ python -m unittest discover -s tests -t .
 
 **Best offers** scans a set of popular queries in the background on startup. It ranks products by discount off MRP (MRPs above 3× the price are ignored), savings across stores and rating.
 
+**Wishlist.** The heart on any product saves it to the browser's `localStorage`. Nothing is stored on the server and there are no accounts. Each saved item keeps a snapshot of the product, the search that found it and the price when it was saved. The `/wishlist` page re-runs those searches through `POST /api/prices/track`, which finds the same product again: first by a shared listing URL, then by title using the matcher's rules. It then shows how far each price has moved since saving. Prices older than the 30-minute cache are re-checked when the page opens.
+
 ## Guide sources
 
 | Content | Source |
@@ -125,6 +140,7 @@ frontend/
 | `GET /api/prices/search?q=` | Grouped results (add `refresh=true` to bypass the cache) |
 | `GET /api/prices/search/stream?q=` | Same, as Server-Sent Events: one `store` event per store, then `result` |
 | `GET /api/prices/deals` | Best offers across popular products |
+| `POST /api/prices/track` | Latest prices for wishlist items: `{"items": [{"key", "title", "query", "urls"}]}` (max 60) |
 | `GET /api/guides/games` | Supported games |
 | `GET /api/guides/{game}/roster/{roster}` | e.g. `valorant/roster/agents`, `genshin-impact/roster/characters` |
 | `GET /api/guides/{game}/wiki?title=` | Cleaned wiki page (+ Valorant ability data) |

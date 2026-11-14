@@ -29,7 +29,7 @@ export default function Deals() {
       .catch((error) => setState({ data: null, error, loading: false }));
   };
   useEffect(() => {
-    document.title = "Best offers · LootScout";
+    document.title = "Best offers · Zaptos";
     load();
   }, []);
 
@@ -74,7 +74,7 @@ export default function Deals() {
         ))}
         <div className="ml-auto flex items-center gap-3">
           <label className="flex items-center gap-2 text-sm text-muted">
-            <input type="checkbox" checked={multi} onChange={(e) => setMulti(e.target.checked)} className="h-4 w-4 accent-[#8b6cff]" />
+            <input type="checkbox" checked={multi} onChange={(e) => setMulti(e.target.checked)} className="h-4 w-4 accent-[#22e584]" />
             Compared at 2+ stores
           </label>
           <select value={sort} onChange={(e) => setSort(e.target.value)} className="rounded-xl border border-line bg-panel-2 px-3 py-2 text-sm outline-none focus:border-brand" aria-label="Sort deals">

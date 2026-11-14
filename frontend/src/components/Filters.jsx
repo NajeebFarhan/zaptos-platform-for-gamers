@@ -111,7 +111,7 @@ export default function Filters({ filters, setFilters, storeCounts }) {
                 key={s.id}
                 className={`flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm hover:bg-panel-2 ${count ? "" : "opacity-50"}`}
               >
-                <input type="checkbox" checked={on} onChange={() => toggleStore(s.id)} className="h-4 w-4 accent-[#8b6cff]" />
+                <input type="checkbox" checked={on} onChange={() => toggleStore(s.id)} className="h-4 w-4 accent-[#22e584]" />
                 <span className="h-2.5 w-2.5 rounded-full" style={{ background: s.color }} />
                 <span className="flex-1 text-text">{s.name}</span>
                 <span className="text-xs text-dim">{count}</span>

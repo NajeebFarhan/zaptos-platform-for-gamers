@@ -5,7 +5,7 @@ Run:  python -m unittest discover -s tests
 
 import unittest
 
-from app.prices.matcher import build_groups, conflict, features, normalise
+from app.prices.matcher import build_groups, conflict, features, find_match, normalise
 from app.prices.models import Offer
 
 
@@ -103,6 +103,34 @@ class Grouping(unittest.TestCase):
         ]
         groups = build_groups("rtx 5060", offers)
         self.assertNotIn(" Ti ", f" {groups[0].title} ")
+
+
+class WishlistMatch(unittest.TestCase):
+    """Finding a saved product again in fresh results (group ids change as stores come and go)."""
+
+    def setUp(self):
+        mk = Grouping.offer
+        self.offers = [
+            mk(self, "amazon", "MSI GeForce RTX 5060 8G Ventus 2X OC Graphic Card", 62000),
+            mk(self, "mdcomputers", "MSI RTX 5060 Ventus 2X OC 8GB GDDR7 Graphics Card", 59999),
+            mk(self, "vedant", "MSI RTX 5060 Shadow 2X OC 8GB GDDR7", 60500),
+            mk(self, "flipkart", "ZOTAC RTX 5060 Ti Twin Edge 8GB GDDR7 Graphics Card", 55000),
+        ]
+        self.groups = build_groups("rtx 5060", self.offers)
+
+    def test_matches_on_shared_listing_url(self):
+        url = self.offers[1].url
+        g = find_match(self.groups, "something unrelated", [url, "https://gone.example/x"])
+        self.assertIn(url, {o.url for o in g.offers})
+
+    def test_falls_back_to_title(self):
+        g = find_match(self.groups, "MSI RTX 5060 Ventus 2X OC 8GB", ["https://gone.example/x"])
+        self.assertIn("Ventus", g.title)
+
+    def test_never_returns_a_different_model(self):
+        self.assertIsNone(find_match(self.groups, "MSI RTX 5070 Ventus 2X OC 12GB"))
+        self.assertIsNone(find_match(self.groups, "ZOTAC RTX 5060 Twin Edge 8GB"))  # saved non-Ti, only Ti listed
+        self.assertIsNone(find_match([], "MSI RTX 5060 Ventus"))
 
 
 if __name__ == "__main__":

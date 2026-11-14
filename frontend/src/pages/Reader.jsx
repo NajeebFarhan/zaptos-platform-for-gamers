@@ -14,7 +14,7 @@ export default function Reader() {
   const { data: a, error, loading, reload } = useApi(url ? `/api/guides/article?url=${encodeURIComponent(url)}` : null);
 
   useEffect(() => {
-    if (a) document.title = `${a.title} · LootScout`;
+    if (a) document.title = `${a.title} · Zaptos`;
   }, [a]);
 
   return (

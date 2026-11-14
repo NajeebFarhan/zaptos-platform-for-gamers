@@ -1,4 +1,4 @@
-# Starts the LootScout backend (FastAPI on :8000) and frontend (Vite on :5173).
+# Starts the Zaptos backend (FastAPI on :8000) and frontend (Vite on :5173).
 # First run installs dependencies. Usage:  .\start.ps1
 $ErrorActionPreference = "Stop"
 $root = $PSScriptRoot

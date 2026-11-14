@@ -7,7 +7,7 @@ import { useApi } from "../lib/api";
 export default function GuidesHome() {
   const { data, error, loading, reload } = useApi("/api/guides/games");
   useEffect(() => {
-    document.title = "Game guides · LootScout";
+    document.title = "Game guides · Zaptos";
   }, []);
 
   return (

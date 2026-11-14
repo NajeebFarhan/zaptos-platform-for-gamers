@@ -2,8 +2,11 @@ import { useCallback, useEffect, useState } from "react";
 
 const BASE = import.meta.env.VITE_API_BASE || "";
 
-export async function api(path, { signal } = {}) {
-  const res = await fetch(BASE + path, { signal });
+export async function api(path, { signal, body } = {}) {
+  const init = body === undefined
+    ? { signal }
+    : { signal, method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) };
+  const res = await fetch(BASE + path, init);
   if (!res.ok) {
     let detail;
     try {

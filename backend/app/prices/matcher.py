@@ -356,6 +356,26 @@ def build_groups(query: str, offers: list[Offer]) -> list[ProductGroup]:
     return groups
 
 
+def find_match(groups: list[ProductGroup], title: str, urls: list[str] | None = None) -> ProductGroup | None:
+    """The group in fresh search results that is the same product as a saved one.
+
+    Group ids hash the offer URLs, so they change whenever a store joins or leaves; match on
+    shared listing URLs first, then on the title with the same rules used for grouping.
+    """
+    if not groups:
+        return None
+    wanted = set(urls or [])
+    if wanted:
+        overlap = [(len(wanted & {o.url for o in g.offers}), g) for g in groups]
+        hits, best = max(overlap, key=lambda x: x[0])
+        if hits:
+            return best
+    ref = features(title)
+    scored = [(similarity(ref, features(g.title)), g) for g in groups]
+    score, best = max(scored, key=lambda x: x[0])
+    return best if score >= MATCH_THRESHOLD else None
+
+
 def _to_group(members, q_digit, q_alpha, q_kind, query) -> ProductGroup:
     # cheapest in-stock offer per store
     per_store: dict[str, Offer] = {}

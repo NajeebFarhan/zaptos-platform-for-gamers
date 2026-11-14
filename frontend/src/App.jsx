@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import Reader from "./pages/Reader";
 import Search from "./pages/Search";
 import WikiPage from "./pages/WikiPage";
+import Wishlist from "./pages/Wishlist";
 
 function NotFound() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
           <Route index element={<Home />} />
           <Route path="search" element={<Search />} />
           <Route path="deals" element={<Deals />} />
+          <Route path="wishlist" element={<Wishlist />} />
           <Route path="guides" element={<GuidesHome />} />
           <Route path="guides/:gameId" element={<GameHub />} />
           <Route path="guides/:gameId/wiki/:title" element={<WikiPage />} />

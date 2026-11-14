@@ -1,9 +1,10 @@
 import { ExternalLink, Scale, TrendingDown } from "lucide-react";
 import { inr, KIND_LABELS } from "../lib/format";
 import { Img, RatingBadge, StoreBadge } from "./ui";
+import WishlistButton from "./WishlistButton";
 
 /** One product, priced across stores — modelled on trivago's hotel row. */
-export default function ProductCard({ group, onCompare }) {
+export default function ProductCard({ group, query, onCompare }) {
   const { best, offers } = group;
   const others = offers.filter((o) => o !== offers[0] && o.store !== best.store).slice(0, 3);
   const more = offers.length - 1 - others.length;
@@ -85,6 +86,7 @@ export default function ProductCard({ group, onCompare }) {
           <button onClick={() => onCompare(group)} className="btn-ghost px-3" title="Compare all prices" aria-label="Compare all prices">
             <Scale className="h-4 w-4" />
           </button>
+          <WishlistButton group={group} query={query} />
         </div>
       </div>
     </article>

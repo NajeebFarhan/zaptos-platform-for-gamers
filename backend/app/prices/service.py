@@ -7,8 +7,8 @@ from app.config import EMPTY_PRICE_TTL, PRICE_TTL, STORE_TIMEOUT
 from app.core.cache import cache
 from app.core.http import http
 from app.prices.catalog import DEAL_QUERIES
-from app.prices.matcher import build_groups
-from app.prices.models import Offer
+from app.prices.matcher import build_groups, find_match
+from app.prices.models import Offer, ProductGroup
 from app.prices.stores import STORES, StoreBlocked
 
 _inflight: dict[str, asyncio.Task] = {}
@@ -128,6 +128,37 @@ async def _compute_deals() -> list[dict]:
                 deals.append(g)
     deals.sort(key=lambda g: -g["deal_score"])
     return deals[:80]
+
+
+async def track(items: list[dict], refresh: bool = False) -> dict:
+    """Latest prices for saved (wishlist) products: re-run each one's search and find it again.
+
+    `items` are {key, query, title, urls}. Items sharing a query share one search.
+    """
+    sem = asyncio.Semaphore(3)
+    searches: dict[str, asyncio.Task] = {}
+
+    async def run(query: str) -> dict:
+        async with sem:
+            return await search(query, refresh=refresh)
+
+    for it in items:
+        k = query_key(it["query"])
+        if k not in searches:
+            searches[k] = asyncio.ensure_future(run(it["query"]))
+    done = dict(zip(searches, await asyncio.gather(*searches.values(), return_exceptions=True)))
+
+    results = {}
+    for it in items:
+        res = done[query_key(it["query"])]
+        if isinstance(res, Exception):
+            results[it["key"]] = {"status": "error", "group": None}
+            continue
+        groups = [ProductGroup(**g) for g in res["groups"]]
+        match = find_match(groups, it["title"], it.get("urls"))
+        results[it["key"]] = {"status": "ok" if match else "missing",
+                              "group": match.model_dump() if match else None}
+    return {"results": results, "generated_at": time.time()}
 
 
 async def deals(refresh: bool = False) -> dict:

@@ -1,17 +1,18 @@
 @import "tailwindcss";
 
 @theme {
-  --color-ink: #0a0b10;
-  --color-panel: #12141c;
-  --color-panel-2: #191c27;
-  --color-panel-3: #222636;
-  --color-line: #272b3b;
-  --color-text: #e7e9f0;
-  --color-muted: #8d92a8;
-  --color-dim: #5d627a;
-  --color-brand: #8b6cff;
-  --color-brand-2: #22d3ee;
-  --color-good: #22c55e;
+  /* Zaptos: black + electric green */
+  --color-ink: #040605;
+  --color-panel: #0b100d;
+  --color-panel-2: #111914;
+  --color-panel-3: #18231c;
+  --color-line: #1e2b23;
+  --color-text: #e6f2ea;
+  --color-muted: #8a9c91;
+  --color-dim: #56685d;
+  --color-brand: #22e584;
+  --color-brand-2: #b6f24a;
+  --color-good: #4ade80;
   --color-warn: #f59e0b;
   --color-bad: #f43f5e;
 
@@ -26,20 +27,20 @@ html {
 body {
   @apply bg-ink text-text font-sans antialiased;
   background-image:
-    radial-gradient(1200px 500px at 10% -10%, rgb(139 108 255 / 0.12), transparent 60%),
-    radial-gradient(900px 400px at 100% 0%, rgb(34 211 238 / 0.08), transparent 60%);
+    radial-gradient(1200px 500px at 10% -10%, rgb(34 229 132 / 0.10), transparent 60%),
+    radial-gradient(900px 400px at 100% 0%, rgb(182 242 74 / 0.05), transparent 60%);
   background-attachment: fixed;
 }
 
 ::selection {
-  background: rgb(139 108 255 / 0.4);
+  background: rgb(34 229 132 / 0.35);
 }
 
 /* Component classes live in the components layer so utilities (px-3, w-full…) can override them. */
 @layer components {
   .text-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(90deg, #a78bfa, #22d3ee);
+    background-image: linear-gradient(90deg, #22e584, #b6f24a);
   }
 
   .card {
@@ -53,7 +54,7 @@ body {
       focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-50;
   }
   .btn-primary {
-    @apply bg-brand text-white shadow-lg shadow-brand/20 hover:bg-[#7a58ff];
+    @apply bg-brand text-ink shadow-lg shadow-brand/25 hover:bg-[#4bf09d];
   }
   .btn-ghost {
     @apply border border-line bg-panel-2 text-text hover:border-brand/60 hover:bg-panel-3;

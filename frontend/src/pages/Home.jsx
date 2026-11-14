@@ -15,7 +15,7 @@ export default function Home() {
   const games = useApi("/api/guides/games");
   const [selected, setSelected] = useState(null);
   useEffect(() => {
-    document.title = "LootScout — Gaming gear prices & game guides";
+    document.title = "Zaptos — Gaming gear prices & game guides";
   }, []);
 
   const topDeals = (deals.data?.deals || []).filter((d) => d.store_count > 1).slice(0, 8);

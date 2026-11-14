@@ -15,7 +15,7 @@ export default function GameHub() {
   const tab = params.get("tab") || "guides";
 
   useEffect(() => {
-    if (game) document.title = `${game.name} guides · LootScout`;
+    if (game) document.title = `${game.name} guides · Zaptos`;
   }, [game]);
 
   if (error) return <div className="mx-auto max-w-3xl px-4 py-16"><ErrorState title="Game not found" message={error.message} onRetry={reload} /></div>;

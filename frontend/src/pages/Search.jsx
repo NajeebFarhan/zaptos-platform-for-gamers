@@ -29,7 +29,7 @@ export default function Search() {
     setVisible(PAGE);
   }, [q]);
   useEffect(() => {
-    document.title = q ? `${q} — price comparison · LootScout` : "Compare prices · LootScout";
+    document.title = q ? `${q} — price comparison · Zaptos` : "Compare prices · Zaptos";
   }, [q]);
 
   const result = search.result;
@@ -137,7 +137,7 @@ export default function Search() {
           {result && groups.length > 0 && (
             <div className="space-y-4">
               {groups.slice(0, visible).map((g) => (
-                <ProductCard key={g.id} group={g} onCompare={setSelected} />
+                <ProductCard key={g.id} group={g} query={q} onCompare={setSelected} />
               ))}
               {visible < groups.length && (
                 <button className="btn-ghost w-full py-3" onClick={() => setVisible((v) => v + PAGE)}>
@@ -149,7 +149,7 @@ export default function Search() {
         </section>
       </div>
 
-      <ProductDrawer group={selected} onClose={() => setSelected(null)} />
+      <ProductDrawer group={selected} query={q} onClose={() => setSelected(null)} />
     </div>
   );
 }

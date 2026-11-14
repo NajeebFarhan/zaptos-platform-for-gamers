@@ -2,9 +2,10 @@ import { useEffect } from "react";
 import { Check, ExternalLink, Info, PackageX, X } from "lucide-react";
 import { inr, KIND_LABELS, num } from "../lib/format";
 import { Img, RatingBadge, Stars, StoreBadge } from "./ui";
+import WishlistButton from "./WishlistButton";
 
 /** Full price comparison for one product: every store, price bars, ratings, stock. */
-export default function ProductDrawer({ group, onClose }) {
+export default function ProductDrawer({ group, query, onClose }) {
   useEffect(() => {
     if (!group) return;
     const onKey = (e) => e.key === "Escape" && onClose();
@@ -26,9 +27,12 @@ export default function ProductDrawer({ group, onClose }) {
       <div className="relative flex h-full w-full max-w-2xl flex-col overflow-y-auto border-l border-line bg-panel scrollbar-thin">
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-line bg-panel/95 px-5 py-3 backdrop-blur">
           <div className="font-display text-lg font-semibold">Compare prices</div>
-          <button className="btn-ghost px-2.5 py-2" onClick={onClose} aria-label="Close">
-            <X className="h-5 w-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <WishlistButton group={group} query={query} variant="full" className="py-2" />
+            <button className="btn-ghost px-2.5 py-2" onClick={onClose} aria-label="Close">
+              <X className="h-5 w-5" />
+            </button>
+          </div>
         </div>
 
         <div className="space-y-6 p-5">

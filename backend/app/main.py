@@ -33,10 +33,10 @@ async def lifespan(app: FastAPI):
     await http.close()
 
 
-app = FastAPI(title="LootScout API", version="1.0.0", lifespan=lifespan,
+app = FastAPI(title="Zaptos API", version="1.0.0", lifespan=lifespan,
               description="Gaming hardware price comparison across Indian stores + game guides.")
 app.add_middleware(GZipMiddleware, minimum_size=1024)
-app.add_middleware(CORSMiddleware, allow_origins=CORS_ORIGINS, allow_methods=["GET"], allow_headers=["*"])
+app.add_middleware(CORSMiddleware, allow_origins=CORS_ORIGINS, allow_methods=["GET", "POST"], allow_headers=["*"])
 
 app.include_router(prices.router)
 app.include_router(guides.router)
